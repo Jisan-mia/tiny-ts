@@ -1,11 +1,11 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import TodoInput from './components/Todo/TodoInput';
 
 function App() {
   return (
     <>
-      <h1> this is react with typescript app </h1>
+      <TodoInput />
     </>
   );
 }
