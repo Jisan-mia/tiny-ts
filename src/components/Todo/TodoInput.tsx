@@ -2,15 +2,19 @@ import React from 'react'
 import styles from './TodoInput.module.scss'
 
 const TodoInput = () => {
+  const handleSubmitTodo = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  }
+  
   return (
-    <form className={styles.container}>
+    <form className={styles.container} onSubmit={(e) => handleSubmitTodo(e)}>
       <div className={styles.card}>
       <h2>
         Todo
         </h2>
 
         <label htmlFor="todo" className={styles.input}>
-          <input type="text" className={styles.input__field} />
+          <input type="text" className={styles.input__field} placeholder=" " />
           <span className={styles.input__label}>
             Start typing here
           </span>
