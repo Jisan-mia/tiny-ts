@@ -1,17 +1,24 @@
 import React from 'react'
+import { Todo } from '../types'
+import TodoItem from './TodoItem'
 import styles from './Todos.module.scss'
 
-const Todos:React.FC = () => {
+interface IProps {
+  todos: Todo[]
+}
+
+const Todos:React.FC<IProps> = ({todos}) => {
   return (
     <div className={styles.todo__container}>
       <div className={styles.active__todo}>
         <h2>Active</h2>
 
         <ul className={styles.todos}>
-          <li className={styles.todo__item}>todo item</li>
-          <li className={styles.todo__item}>todo item</li>
-
-          <li className={styles.todo__item}>todo item</li>
+          {
+            todos && todos.map((todo) => (
+             <TodoItem key={todo.id} todo={todo} />
+            ))
+          }
 
         </ul>
       </div>

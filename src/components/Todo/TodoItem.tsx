@@ -1,8 +1,16 @@
 import React from 'react'
+import { Todo } from '../types'
+import styles from './TodoItem.module.scss'
 
-const TodoItem = () => {
+interface IProps {
+  todo: Todo
+}
+
+const TodoItem:React.FC<IProps> = ({todo}) => {
   return (
-    <div>TodoItem</div>
+    <>
+      <li className={styles.todo__item} >{todo.todo}</li>
+    </>
   )
 }
 

@@ -26,7 +26,10 @@ const TodoInput:React.FC<IProps> = ({todo, setTodo, handleSubmitTodo}) => {
     <form 
       ref={formRef}
       className={styles.container} 
-      onSubmit={(e) => handleSubmitTodo(e)} 
+      onSubmit={(e) => {
+        handleSubmitTodo(e)
+        inputRef.current?.blur();
+      }} 
       onReset={(e) => handleResetForm(e)}
     >
       <div className={styles.card}>
