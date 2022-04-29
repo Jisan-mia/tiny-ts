@@ -16,10 +16,10 @@ const Todos:React.FC<IProps> = ({todos, setTodos, completedTodos, setCompletedTo
     
     <div className={styles.todo__container}>
 
-      <Droppable droppableId='TodosList' >
+      <Droppable droppableId={`activeTodo`} >
         {
-          (provided) => (
-            <div className={styles.active__todo} ref={provided.innerRef} {...provided.droppableProps}>
+          (provided, snapshot) => (
+            <div className={`${styles.active__todo} ${snapshot.isDraggingOver && styles.droppingActive}`}  ref={provided.innerRef} {...provided.droppableProps}>
               <h2>Active</h2>
 
               <ul className={styles.todos}>
@@ -39,10 +39,10 @@ const Todos:React.FC<IProps> = ({todos, setTodos, completedTodos, setCompletedTo
 
       </Droppable>
 
-      <Droppable droppableId='TodosRemove' >
+      <Droppable droppableId={`completedTodo`} >
         {
-          (provided) => (
-            <div className={styles.completed__todo} ref={provided.innerRef} {...provided.droppableProps}>
+          (provided, snapshot) => (
+            <div className={`${styles.completed__todo} ${snapshot.isDraggingOver && styles.droppingCompleted}`} ref={provided.innerRef} {...provided.droppableProps}>
               <h2>Completed</h2>
 
               <ul className={styles.todos}>

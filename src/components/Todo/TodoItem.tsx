@@ -46,8 +46,8 @@ const TodoItem:React.FC<IProps> = ({index, todo, todos, setTodos}) => {
   return (
     <Draggable draggableId={`${todo.id}`} index={index}>
       {
-        (provided) => (
-          <li className={styles.todo__item} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} >
+        (provided, snapshot) => (
+          <li className={`${styles.todo__item} ${snapshot.isDragging && styles.dragging}`} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} >
         
             {
               !editModeState ? (

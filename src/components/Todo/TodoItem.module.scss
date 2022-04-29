@@ -21,10 +21,10 @@
   //   cursor: grabbing;
   // }
 
-  &:hover {
-    box-shadow: rgb(0 0 0 / 20%) 0px 16px 32px 0px;
-    transform: scale(1.03);
-  }
+  // &:hover {
+  //   box-shadow: rgb(0 0 0 / 20%) 0px 16px 32px 0px;
+  //   transform: scale(1.03);
+  // }
 
 
   .todo__text {
@@ -63,4 +63,9 @@
     cursor: grabbing;
   }
   
+}
+
+.dragging {
+  box-shadow: rgb(0 0 0 / 20%) 0px 16px 32px 0px;
+    transform: scale(1.03);
 }
