@@ -10,7 +10,7 @@
   background-color: #fff;
   box-shadow: 1px 1px 8px rgb(0 0 0 / 10%);
   display: grid;
-  grid-template-rows: 48px;
+  grid-template-rows:minmax(48px, auto);
   align-items: center;
   grid-template-columns: repeat(12, 1fr);
   overflow: hidden;
@@ -29,10 +29,16 @@
     width: 100%;
     // grid-area: alias-todo;
     grid-column: 1 / 12;
+    font-size: 0.95rem;
+    line-height: 1rem;
 
     &:focus{
       outline: none;
     }
+  }
+  input.todo__text {
+    border: none;
+    outline: none;
   }
 
   .actions {
