@@ -1,7 +1,12 @@
 import React from 'react'
 import styles from './TodoInput.module.scss'
 
-const TodoInput = () => {
+interface IProps {
+  todo: string,
+  setTodo: React.Dispatch<React.SetStateAction<string>>
+}
+
+const TodoInput = ({todo, setTodo}: IProps) => {
   const handleSubmitTodo = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   }
@@ -12,7 +17,7 @@ const TodoInput = () => {
       <h2>
         Todo
         </h2>
-
+    
         <label htmlFor="todo" className={styles.input}>
           <input type="text" className={styles.input__field} placeholder=" " />
           <span className={styles.input__label}>
