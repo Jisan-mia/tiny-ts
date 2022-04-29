@@ -29,6 +29,10 @@
     width: 100%;
     // grid-area: alias-todo;
     grid-column: 1 / 12;
+
+    &:focus{
+      outline: none;
+    }
   }
 
   .actions {
@@ -42,8 +46,9 @@
     grid-column: 12 / -1;
 
 
-    &:active {
-      cursor: grabbing;
-    }
+    
+  }
+  .actions:active {
+    cursor: grabbing;
   }
 }
