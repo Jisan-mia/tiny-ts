@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { Draggable } from 'react-beautiful-dnd'
 import { Todo } from '../types'
 import styles from './TodoItem.module.scss'
 
 type IProps = {
+  index: number,
   todo: Todo,
   todos: Todo[],
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>
 }
 
-const TodoItem:React.FC<IProps> = ({todo, todos, setTodos}) => {
+const TodoItem:React.FC<IProps> = ({index, todo, todos, setTodos}) => {
   const [editModeState, setEditModeState] = useState<boolean>(false)
   const [editTodo, setEditTodo] = useState<string>(todo?.todo)
   const todoRef = useRef<HTMLTextAreaElement>(null)
@@ -26,7 +28,7 @@ const TodoItem:React.FC<IProps> = ({todo, todos, setTodos}) => {
       setTodos(todos.filter(todo => todo.id !== id))
     }
 
-    // setEditModeState(false)
+    setEditModeState(false)
   }
   const onKeyDn = (e: React.KeyboardEvent<HTMLTextAreaElement>, id: number) => {
     if (editModeState && e.keyCode === 13) { // ESC;
@@ -42,43 +44,47 @@ const TodoItem:React.FC<IProps> = ({todo, todos, setTodos}) => {
   }
 
   return (
-    <>
-      <li className={styles.todo__item} >
+    <Draggable draggableId={`${todo.id}`} index={index}>
+      {
+        (provided) => (
+          <li className={styles.todo__item} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} >
         
-        {
-          !editModeState ? (
-            <div
-              onClick={() =>setEditModeState(true)}
-              className={styles.todo__text}
-              >
-              {todo.todo}
+            {
+              !editModeState ? (
+                <div
+                  onClick={() =>setEditModeState(true)}
+                  className={styles.todo__text}
+                  >
+                  {todo.todo}
+                </div>
+              ) : (
+                <textarea 
+                  rows={1}
+                  ref={todoRef}
+                  value={editTodo} 
+                  onChange={e => {
+                    setEditTodo(e.target.value)
+                    auto_height(e)
+                  }} 
+                  onBlur={() => handleEditTodos(todo.id)}
+                  onKeyDown={e => onKeyDn(e, todo.id)}
+                  // type="text" 
+                  className={styles.todo__text}
+
+                ></textarea>
+              )
+            }
+            
+            
+
+            <div className={styles.actions}>
+              {/* <input type="checkbox" checked={todo.isDone} name="" id="" /> */}
             </div>
-          ) : (
-            <textarea 
-              rows={1}
-              ref={todoRef}
-              value={editTodo} 
-              onChange={e => {
-                setEditTodo(e.target.value)
-                auto_height(e)
-              }} 
-              onBlur={() => handleEditTodos(todo.id)}
-              onKeyDown={e => onKeyDn(e, todo.id)}
-              // type="text" 
-              className={styles.todo__text}
-
-            ></textarea>
-          )
-        }
-        
-        
-
-        <div className={styles.actions}>
-          {/* <input type="checkbox" checked={todo.isDone} name="" id="" /> */}
-        </div>
-      
-      </li>
-    </>
+          
+          </li>
+        )
+      }
+    </Draggable>
   )
 }
 

@@ -14,11 +14,17 @@
   align-items: center;
   grid-template-columns: repeat(12, 1fr);
   overflow: hidden;
+  transition: all 0.2s ease-in-out;
   // grid-template-areas: "alias-todo alias-todo alias-todo alias-todo alias-todo alias-todo alias-todo alias-todo alias-todo alias-dragger alias-dragger";
 
   // &:active {
   //   cursor: grabbing;
   // }
+
+  &:hover {
+    box-shadow: rgb(0 0 0 / 20%) 0px 16px 32px 0px;
+    transform: scale(1.03);
+  }
 
 
   .todo__text {
@@ -50,11 +56,11 @@
     border-radius: 0 4px 4px 0;
     cursor: grab;
     grid-column: 12 / -1;
-
-
     
+
   }
   .actions:active {
     cursor: grabbing;
   }
+  
 }
