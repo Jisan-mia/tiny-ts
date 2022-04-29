@@ -11,7 +11,7 @@ type IProps = {
 const TodoItem:React.FC<IProps> = ({todo, todos, setTodos}) => {
   const [editModeState, setEditModeState] = useState<boolean>(false)
   const [editTodo, setEditTodo] = useState<string>(todo?.todo)
-  const todoRef = useRef<HTMLInputElement>(null)
+  const todoRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     todoRef.current?.focus()
@@ -26,14 +26,19 @@ const TodoItem:React.FC<IProps> = ({todo, todos, setTodos}) => {
       setTodos(todos.filter(todo => todo.id !== id))
     }
 
-    setEditModeState(false)
+    // setEditModeState(false)
   }
-  const onKeyDn = (e: React.KeyboardEvent<HTMLDivElement>, id: number) => {
+  const onKeyDn = (e: React.KeyboardEvent<HTMLTextAreaElement>, id: number) => {
     if (editModeState && e.keyCode === 13) { // ESC;
       setEditModeState(false)
 
       handleEditTodos(id)
     }    
+  }
+
+  const auto_height = (e:  React.ChangeEvent<HTMLTextAreaElement>) => {
+    e.target.style.height = "auto";
+    e.target.style.height = (e.target.scrollHeight)+"px";
   }
 
   return (
@@ -49,16 +54,20 @@ const TodoItem:React.FC<IProps> = ({todo, todos, setTodos}) => {
               {todo.todo}
             </div>
           ) : (
-            <input 
+            <textarea 
+              rows={1}
               ref={todoRef}
               value={editTodo} 
-              onChange={e => setEditTodo(e.target.value)} 
+              onChange={e => {
+                setEditTodo(e.target.value)
+                auto_height(e)
+              }} 
               onBlur={() => handleEditTodos(todo.id)}
               onKeyDown={e => onKeyDn(e, todo.id)}
-              type="text" 
+              // type="text" 
               className={styles.todo__text}
 
-            />
+            ></textarea>
           )
         }
         

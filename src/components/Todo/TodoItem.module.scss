@@ -30,15 +30,15 @@
     // grid-area: alias-todo;
     grid-column: 1 / 12;
     font-size: 0.95rem;
-    line-height: 1rem;
 
     &:focus{
       outline: none;
     }
   }
-  input.todo__text {
+  textarea.todo__text {
     border: none;
     outline: none;
+    resize: none;
   }
 
   .actions {
