@@ -2,9 +2,12 @@
   margin: calc(3 * 0.5rem);
   display: flex;
   gap: 2.8rem;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
   
   .active__todo, .completed__todo {
-    flex-grow: 1;
+    // flex-grow: 1;
     padding: calc(4 * 0.5rem);
     border: 2px solid #5c5c5c;
     border-radius: 4px;

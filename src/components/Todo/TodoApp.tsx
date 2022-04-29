@@ -26,7 +26,7 @@ function TodoApp() {
   return (
     <>
       <TodoInput todo={todo} setTodo={setTodo} handleSubmitTodo={handleSubmitTodo}/>
-      <Todos todos={todos} />
+      <Todos todos={todos} setTodos={setTodos}/>
     </>
   );
 }

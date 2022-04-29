@@ -1,4 +1,3 @@
-import React, {useState} from 'react';
 import './App.scss';
 import TodoApp from './components/Todo/TodoApp';
 

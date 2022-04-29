@@ -4,10 +4,11 @@ import TodoItem from './TodoItem'
 import styles from './Todos.module.scss'
 
 interface IProps {
-  todos: Todo[]
+  todos: Todo[],
+  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>
 }
 
-const Todos:React.FC<IProps> = ({todos}) => {
+const Todos:React.FC<IProps> = ({todos, setTodos}) => {
   return (
     <div className={styles.todo__container}>
       <div className={styles.active__todo}>
@@ -15,9 +16,9 @@ const Todos:React.FC<IProps> = ({todos}) => {
 
         <ul className={styles.todos}>
           {
-            todos && todos.map((todo) => (
-             <TodoItem key={todo.id} todo={todo} />
-            ))
+            todos.length ? todos.map((todo) => (
+             <TodoItem key={todo.id} todo={todo} todos={todos} setTodos={setTodos}/>
+            )) : ''
           }
 
         </ul>

@@ -1,13 +1,49 @@
-li.todo__item {
-  padding: calc(0.5rem * 1.5) 0.5rem;
+.todo__item {
 
   margin-top: calc(2.5 * 0.5rem);
   border: 2px solid #5c5c5c;
   border-radius: 4px;
   font-size: 0.95rem;
-  cursor:grab;
+ 
+  // margin-top: 10px;
 
-  &:active {
-    cursor: grabbing;
+  background-color: #fff;
+  box-shadow: 1px 1px 8px rgb(0 0 0 / 10%);
+  display: grid;
+  grid-template-rows: 48px;
+  align-items: center;
+  grid-template-columns: repeat(12, 1fr);
+  overflow: hidden;
+  // grid-template-areas: "alias-todo alias-todo alias-todo alias-todo alias-todo alias-todo alias-todo alias-todo alias-todo alias-dragger alias-dragger";
+
+  // &:active {
+  //   cursor: grabbing;
+  // }
+
+
+  .todo__text {
+    padding: calc(0.5rem * 1.5) 0.5rem;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    // grid-area: alias-todo;
+    grid-column: 1 / 12;
+  }
+
+  .actions {
+    // grid-area: alias-dragger;
+    height: 100%;
+    width: 87%;
+    box-shadow: 8px 0 0 0 #464646;
+    background: #5c5c5c;
+    border-radius: 0 4px 4px 0;
+    cursor: grab;
+    grid-column: 12 / -1;
+
+
+    &:active {
+      cursor: grabbing;
+    }
   }
 }
