@@ -15,6 +15,8 @@ const TodoItem:React.FC<IProps> = ({index, todo, todos, setTodos}) => {
   const [editTodo, setEditTodo] = useState<string>(todo?.todo)
   const todoRef = useRef<HTMLTextAreaElement>(null)
 
+
+  // console.log(todo, index)
   useEffect(() => {
     todoRef.current?.focus()
   }, [editModeState])
@@ -42,12 +44,18 @@ const TodoItem:React.FC<IProps> = ({index, todo, todos, setTodos}) => {
     e.target.style.height = "auto";
     e.target.style.height = (e.target.scrollHeight)+"px";
   }
+  
 
   return (
-    <Draggable draggableId={`${todo.id}`} index={index}>
+    <Draggable draggableId={todo.id.toString()} index={index} key={todo.id}>
       {
         (provided, snapshot) => (
-          <li className={`${styles.todo__item} ${snapshot.isDragging && styles.dragging}`} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} >
+          <li 
+            className={`${styles.todo__item} ${snapshot.isDragging && styles.dragging}`} 
+            ref={provided.innerRef}
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+          >
         
             {
               !editModeState ? (

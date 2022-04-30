@@ -21,7 +21,7 @@ const Todos:React.FC<IProps> = ({columns, setColumns, todos, setTodos, completed
       {
         Object.entries(columns).map(([columnId, column], idx) => {
           return (
-            <Droppable droppableId={`activeTodo`} >
+            <Droppable droppableId={columnId} key={columnId} type="TASK">
               {
                 (provided, snapshot) => (
                   <div 
@@ -34,9 +34,10 @@ const Todos:React.FC<IProps> = ({columns, setColumns, todos, setTodos, completed
                     <ul className={styles.todos}>
 
                       {
-                        column.items.length ? column.items.map((todo, idx) => (
+                        column.items.map((todo, idx) => (
                           <TodoItem index={idx} key={todo.id} todo={todo} todos={todos} setTodos={setTodos}/>
-                        )) : ''
+                          
+                        ))
                       }
 
                       {provided.placeholder}

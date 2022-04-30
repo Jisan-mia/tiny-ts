@@ -7,7 +7,44 @@ import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 
 function TodoApp() {
 
-  const [columns, setColumns] = useState<ColumnRecord>({})
+  const [columns, setColumns] = useState<ColumnRecord>({
+    backlog: {
+      name: 'Backlog',
+      items: [
+        {
+          id: 54545484,
+          todo: 'backlog demo'
+        }
+      ]
+    },
+    todo: {
+      name: 'Todo',
+      items: [
+        {
+          id: 3898748,
+          todo: 'todo demo'
+        }
+      ]
+    },
+    inProgress: {
+      name: "In Progress",
+      items: [
+        {
+          id: 215754,
+          todo: 'in progress demo'
+        }
+      ]
+    },
+    done: {
+      name: "Done",
+      items: [
+        {
+          id: 98359234,
+          todo: 'done demo'
+        }
+      ]
+    }
+  })
   
   const [todo, setTodo] = useState<string>("");
   const [backlogTodos, setBacklogTodos] = useState<Todo[]>([])
@@ -30,7 +67,8 @@ function TodoApp() {
   }
 
   const handleDragEnd = (result: DropResult) => {
-    const {destination, source} = result
+    const {destination, source} = result;
+    console.log(destination, source);
 
     if(!destination) return;
     if(destination.droppableId === source.droppableId && destination.index === source.index) return 
