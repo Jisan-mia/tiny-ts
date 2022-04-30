@@ -5,6 +5,10 @@ export interface Todo {
   badge?: string
 }
 
+export interface ColumnRecord {
+   [key: string]: Column
+}
+
 export interface Column {
   name: "Backlog" 
         | "Todo" 

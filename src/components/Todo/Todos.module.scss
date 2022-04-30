@@ -6,18 +6,19 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
   
-  .active__todo, .completed__todo {
+  .todo__content {
     // flex-grow: 1;
-    padding: calc(4 * 0.5rem);
-    border: 2px solid #5c5c5c;
+    padding: calc(2 * 0.5rem);
+    border: 1.5px solid #5c5c5c;
     border-radius: 4px;
     // box-shadow: 0.5rem .5rem 0 #5C5C5C;
-    box-shadow: 6px 6px 0 0 #5C5C5C;
+    box-shadow: 5px 5px 0 0 #5C5C5C;
     max-height: 56vh;
     overflow-y: auto;
     
     h2{
       color: #5c5c5c;
+      font-size: 1.3rem;
     }
   }
 
