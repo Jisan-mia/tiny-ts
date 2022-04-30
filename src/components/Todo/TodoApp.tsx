@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Todo } from "../types";
+import { Column, Todo } from "../types";
 import TodoInput from "./TodoInput";
 import Todos from "./Todos";
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
@@ -7,8 +7,12 @@ import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 
 function TodoApp() {
 
+  const [columns, setColumn] = useState<Column[]>([])
+  
   const [todo, setTodo] = useState<string>("");
+  const [backlogTodos, setBacklogTodos] = useState<Todo[]>([])
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [inProgressTodos, setInProgressTodos] = useState<Todo[]>([])
   const [completedTodos, setCompletedTodos] = useState<Todo[]>([])
 
 
@@ -19,7 +23,6 @@ function TodoApp() {
       setTodos([...todos, {
         id: Date.now(),
         todo: todo,
-        isDone: false
       }])
 
       setTodo("")
@@ -58,7 +61,7 @@ function TodoApp() {
   return (
     <>
       <DragDropContext onDragEnd={handleDragEnd}>
-        <TodoInput todo={todo} setTodo={setTodo} handleSubmitTodo={handleSubmitTodo}/>
+        {/* <TodoInput todo={todo} setTodo={setTodo} handleSubmitTodo={handleSubmitTodo}/> */}
         <Todos todos={todos} setTodos={setTodos} completedTodos={completedTodos} setCompletedTodos={setCompletedTodos}/>
       </DragDropContext>
     </>

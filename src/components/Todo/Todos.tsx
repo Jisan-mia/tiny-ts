@@ -15,6 +15,7 @@ const Todos:React.FC<IProps> = ({todos, setTodos, completedTodos, setCompletedTo
   return (
     
     <div className={styles.todo__container}>
+      {/* active todo */}
 
       <Droppable droppableId={`activeTodo`} >
         {
@@ -39,6 +40,35 @@ const Todos:React.FC<IProps> = ({todos, setTodos, completedTodos, setCompletedTo
 
       </Droppable>
 
+        {/* in progress todo */}
+
+        <Droppable droppableId={`inProgress`} >
+        {
+          (provided, snapshot) => (
+            <div className={`${styles.completed__todo} ${snapshot.isDraggingOver && styles.droppingCompleted}`} ref={provided.innerRef} {...provided.droppableProps}>
+              <h2>Completed</h2>
+
+              <ul className={styles.todos}>
+
+                {
+                  completedTodos.length ? completedTodos.map((todo, idx) => (
+                    <TodoItem index={idx} key={todo.id} todo={todo} todos={completedTodos} setTodos={setCompletedTodos}/>
+                  )) : ''
+                }
+                {provided.placeholder}
+
+              </ul>
+            </div>
+          )
+        }
+
+      </Droppable>
+
+      
+
+
+
+{/* completed todo */}
       <Droppable droppableId={`completedTodo`} >
         {
           (provided, snapshot) => (
@@ -60,6 +90,9 @@ const Todos:React.FC<IProps> = ({todos, setTodos, completedTodos, setCompletedTo
         }
 
       </Droppable>
+
+
+
 
     </div>
   )
