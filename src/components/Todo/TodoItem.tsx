@@ -15,11 +15,17 @@ const TodoItem:React.FC<IProps> = ({index, todo, todos, setTodos}) => {
   const [editTodo, setEditTodo] = useState<string>(todo?.todo)
   const todoRef = useRef<HTMLTextAreaElement>(null)
 
+  const [isComponentMounted, setIsComponentMounted] = useState(false)
+
 
   // console.log(todo, index)
   useEffect(() => {
     todoRef.current?.focus()
   }, [editModeState])
+
+  useEffect(() => {
+    setIsComponentMounted(true)
+  }, [])
   
   
   const handleEditTodos = (id: number) => {
@@ -47,7 +53,7 @@ const TodoItem:React.FC<IProps> = ({index, todo, todos, setTodos}) => {
   
 
   return (
-    <Draggable draggableId={todo.id.toString()} index={index} key={todo.id}>
+    <Draggable draggableId={todo.id.toString()} index={index} key={todo.id.toString()} isDragDisabled={false}>
       {
         (provided, snapshot) => (
           <li 
@@ -55,7 +61,7 @@ const TodoItem:React.FC<IProps> = ({index, todo, todos, setTodos}) => {
             ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
-          >
+          > 
         
             {
               !editModeState ? (
