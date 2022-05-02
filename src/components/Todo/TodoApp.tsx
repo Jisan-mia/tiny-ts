@@ -106,8 +106,6 @@ function TodoApp() {
         setColumns={setColumns} 
         todos={todos} 
         setTodos={setTodos} 
-        completedTodos={completedTodos} 
-        setCompletedTodos={setCompletedTodos}
       />
     </>
 

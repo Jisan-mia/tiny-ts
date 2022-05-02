@@ -1,38 +1,52 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Todo } from '../types'
+import { Column, ColumnRecord, Todo } from '../types'
 import styles from './TodoItem.module.scss'
 
 type IProps = {
-  index: number,
   todo: Todo,
   todos: Todo[],
-  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>
+  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>,
+  columns: ColumnRecord,
+  setColumns: React.Dispatch<React.SetStateAction<ColumnRecord>>,
+  columnId: string,
 }
 
-const TodoItem:React.FC<IProps> = ({index, todo, todos, setTodos}) => {
+const TodoItem:React.FC<IProps> = ({ todo, todos, setTodos, columns, setColumns, columnId}) => {
   const [editModeState, setEditModeState] = useState<boolean>(false)
   const [editTodo, setEditTodo] = useState<string>(todo?.todo)
   const todoRef = useRef<HTMLTextAreaElement>(null)
 
-  const [isComponentMounted, setIsComponentMounted] = useState(false)
 
 
   // console.log(todo, index)
   useEffect(() => {
-    todoRef.current?.focus()
+    todoRef.current?.setSelectionRange(editTodo.length, editTodo.length)
+    todoRef.current?.focus();
   }, [editModeState])
 
-  useEffect(() => {
-    setIsComponentMounted(true)
-  }, [])
-  
   
   const handleEditTodos = (id: number) => {
     if(editTodo) {
-      setTodos(todos.map(todo => todo.id === id ? {...todo, todo: editTodo} : todo))
+      setColumns({
+        ...columns,
+        [columnId]: {
+          ...columns[columnId],
+          items: columns[columnId].items.map(item => item.id == id ? {...item, todo: editTodo} : item)
+        }
+      })
+
+
+      // setTodos(todos.map(todo => todo.id === id ? {...todo, todo: editTodo} : todo))
 
     } else {
-      setTodos(todos.filter(todo => todo.id !== id))
+      // setTodos(todos.filter(todo => todo.id !== id))
+      setColumns({
+        ...columns,
+        [columnId]: {
+          ...columns[columnId],
+          items: columns[columnId].items.filter(item => item.id !== id)
+        }
+      })
     }
 
     setEditModeState(false)
@@ -71,7 +85,7 @@ const TodoItem:React.FC<IProps> = ({index, todo, todos, setTodos}) => {
             onChange={e => {
               setEditTodo(e.target.value)
               auto_height(e)
-            }} 
+            }}
             onBlur={() => handleEditTodos(todo.id)}
             onKeyDown={e => onKeyDn(e, todo.id)}
             // type="text" 

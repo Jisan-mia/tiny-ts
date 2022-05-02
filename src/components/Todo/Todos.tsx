@@ -8,11 +8,9 @@ interface IProps {
   setColumns: React.Dispatch<React.SetStateAction<ColumnRecord>>,
   todos: Todo[],
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>,
-  completedTodos: Todo[],
-  setCompletedTodos: React.Dispatch<React.SetStateAction<Todo[]>>
 }
 
-const Todos:React.FC<IProps> = ({columns, setColumns, todos, setTodos, completedTodos, setCompletedTodos}) => {
+const Todos:React.FC<IProps> = ({columns, setColumns, todos, setTodos}) => {
   return (
     
     <div className={styles.todo__container}>
@@ -27,7 +25,15 @@ const Todos:React.FC<IProps> = ({columns, setColumns, todos, setTodos, completed
 
                 {
                   column.items.map((todo, idx) => (
-                    <TodoItem index={idx} key={todo.id} todo={todo} todos={todos} setTodos={setTodos}/>
+                    <TodoItem 
+                      key={todo.id} 
+                      todo={todo} 
+                      todos={todos} 
+                      setTodos={setTodos}
+                      columns={columns}
+                      setColumns={setColumns}
+                      columnId={columnId}
+                    />
                     
                   ))
                 }
