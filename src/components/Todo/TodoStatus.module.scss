@@ -1,0 +1,17 @@
+.status {
+  padding: 0.5rem 0.8rem;
+  border-radius: 4px;
+  color: #5c5c5c;
+  font-weight: 700;
+  margin-right: 0.5rem;
+  background-color: rgb(224, 224, 224);;
+  cursor: pointer;
+  transition: transform 0.2s ease-out;
+  &[type="reset"] {
+    font-weight: 300;
+  }
+  
+}
+.selectedStatus {
+  background-color: #DEA402;
+}

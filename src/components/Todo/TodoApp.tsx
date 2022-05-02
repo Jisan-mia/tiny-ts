@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Column, ColumnRecord, Todo } from "../types";
+import { Column, ColumnRecord, Status, Todo } from "../types";
 import TodoInput from "./TodoInput";
 import Todos from "./Todos";
 
@@ -12,7 +12,8 @@ function TodoApp() {
       items: [
         {
           id: 54545484,
-          todo: 'backlog demo'
+          todo: 'backlog demo',
+          status: 'Backlog'
         }
       ]
     },
@@ -21,7 +22,8 @@ function TodoApp() {
       items: [
         {
           id: 3898748,
-          todo: 'todo demo'
+          todo: 'todo demo',
+          status: 'Todo'
         }
       ]
     },
@@ -30,7 +32,8 @@ function TodoApp() {
       items: [
         {
           id: 215754,
-          todo: 'in progress demo'
+          todo: 'in progress demo',
+          status: 'In Progress'
         }
       ]
     },
@@ -39,13 +42,15 @@ function TodoApp() {
       items: [
         {
           id: 98359234,
-          todo: 'done demo'
+          todo: 'done demo',
+          status: 'Done'
         }
       ]
     }
   })
   
   const [todo, setTodo] = useState<string>("");
+  const [todoStatus, setTodoStatus] = useState<Status>("Backlog")
   const [backlogTodos, setBacklogTodos] = useState<Todo[]>([])
   const [todos, setTodos] = useState<Todo[]>([]);
   const [inProgressTodos, setInProgressTodos] = useState<Todo[]>([])
@@ -56,12 +61,32 @@ function TodoApp() {
   const handleSubmitTodo = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if(todo) {
-      setTodos([...todos, {
-        id: Date.now(),
-        todo: todo,
-      }])
+
+      const columnId = todoStatus == "In Progress" ? 'inProgress' : todoStatus.toLowerCase();
+
+      setColumns({
+        ...columns,
+        [columnId] : {
+          ...columns[columnId],
+          items: [
+            ...columns[columnId].items,
+            {
+              id: Date.now(),
+              todo: todo,
+              status: todoStatus
+            }
+          ]
+        }
+      })
+
+      // setTodos([...todos, {
+      //   id: Date.now(),
+      //   todo: todo,
+      //   status: todoStatus
+      // }])
 
       setTodo("")
+      setTodoStatus("Backlog")
     }
   }
 
@@ -69,8 +94,21 @@ function TodoApp() {
     
   return (
     <>
-        {/* <TodoInput todo={todo} setTodo={setTodo} handleSubmitTodo={handleSubmitTodo}/> */}
-        <Todos columns={columns} setColumns={setColumns} todos={todos} setTodos={setTodos} completedTodos={completedTodos} setCompletedTodos={setCompletedTodos}/>
+      <TodoInput 
+        todo={todo} 
+        setTodo={setTodo} 
+        todoStatus={todoStatus}
+        setTodoStatus={setTodoStatus}
+        handleSubmitTodo={handleSubmitTodo}
+      />
+      <Todos 
+        columns={columns} 
+        setColumns={setColumns} 
+        todos={todos} 
+        setTodos={setTodos} 
+        completedTodos={completedTodos} 
+        setCompletedTodos={setCompletedTodos}
+      />
     </>
 
   );

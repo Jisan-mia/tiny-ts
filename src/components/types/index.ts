@@ -1,8 +1,8 @@
 export interface Todo {
   id: number,
   todo: string,
+  status: string
   dateCreaeted?: Date,
-  badge?: string
 }
 
 export interface ColumnRecord {
@@ -16,6 +16,8 @@ export interface Column {
         | "Done",
   items: Todo[],
 }
+
+export type Status = 'Backlog' | 'Todo' | 'In Progress' | 'Done'
 
 // const obj: Column = {
 //   name: "Backlog",
