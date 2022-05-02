@@ -1,5 +1,4 @@
 import React from 'react'
-import { Droppable } from 'react-beautiful-dnd'
 import { Column, ColumnRecord, Todo } from '../types'
 import TodoItem from './TodoItem'
 import styles from './Todos.module.scss'
@@ -21,33 +20,19 @@ const Todos:React.FC<IProps> = ({columns, setColumns, todos, setTodos, completed
       {
         Object.entries(columns).map(([columnId, column], idx) => {
           return (
-            <Droppable droppableId={columnId} key={columnId} type="TASK">
-              {
-                (provided, snapshot) => (
-                  <div 
-                    className={`${styles.todo__content} ${snapshot.isDraggingOver && styles.droppingActive}`}  
-                    ref={provided.innerRef} 
-                    {...provided.droppableProps}
-                  >
-                    <h2> {column.name} </h2>
+            <div className={`${styles.todo__content}`} key={idx}>
+              <h2> {column.name} </h2>
 
-                    <ul className={styles.todos}>
+              <ul className={styles.todos}>
 
-                      {
-                        column.items.map((todo, idx) => (
-                          <TodoItem index={idx} key={todo.id} todo={todo} todos={todos} setTodos={setTodos}/>
-                          
-                        ))
-                      }
-
-                      {provided.placeholder}
-
-                    </ul>
-                  </div>
-                )
-              }
-
-          </Droppable>
+                {
+                  column.items.map((todo, idx) => (
+                    <TodoItem index={idx} key={todo.id} todo={todo} todos={todos} setTodos={setTodos}/>
+                    
+                  ))
+                }
+              </ul>
+            </div>
           )
         })
       }
