@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Column, ColumnRecord, Status, Todo } from "../types";
 import TodoInput from "./TodoInput";
-import Todos from "./Todos";
+import TodoColumn from "./TodoColumn";
+import styles from './Column.module.scss'
 
 
 function TodoApp() {
@@ -51,10 +52,7 @@ function TodoApp() {
   
   const [todo, setTodo] = useState<string>("");
   const [todoStatus, setTodoStatus] = useState<Status>("Backlog")
-  const [backlogTodos, setBacklogTodos] = useState<Todo[]>([])
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [inProgressTodos, setInProgressTodos] = useState<Todo[]>([])
-  const [completedTodos, setCompletedTodos] = useState<Todo[]>([])
 
 
 
@@ -79,12 +77,6 @@ function TodoApp() {
         }
       })
 
-      // setTodos([...todos, {
-      //   id: Date.now(),
-      //   todo: todo,
-      //   status: todoStatus
-      // }])
-
       setTodo("")
       setTodoStatus("Backlog")
     }
@@ -101,12 +93,24 @@ function TodoApp() {
         setTodoStatus={setTodoStatus}
         handleSubmitTodo={handleSubmitTodo}
       />
-      <Todos 
-        columns={columns} 
-        setColumns={setColumns} 
-        todos={todos} 
-        setTodos={setTodos} 
-      />
+
+      <div className={styles.todo__container}>
+
+        {
+          Object.entries(columns).map(([columnId, column], idx) => (
+            <TodoColumn 
+              key={idx}
+              column={column}
+              columnId={columnId}
+              columns={columns} 
+              setColumns={setColumns} 
+              todos={todos} 
+              setTodos={setTodos} 
+            />
+          ))
+        }
+
+      </div>
     </>
 
   );
