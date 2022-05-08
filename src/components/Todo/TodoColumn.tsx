@@ -7,9 +7,8 @@ import { useDroppable } from "@dnd-kit/core";
 import { rectSortingStrategy, SortableContext } from "@dnd-kit/sortable";
 
 
-
 interface IProps {
-  activeId: any,
+  activeId?: any,
   column: Column,
   columnId: string,
   columns: ColumnRecord,
