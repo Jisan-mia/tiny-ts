@@ -79,7 +79,6 @@ function TodoApp() {
   
   const [todo, setTodo] = useState<string>("");
   const [todoStatus, setTodoStatus] = useState<Status>("Backlog")
-  const [todos, setTodos] = useState<Todo[]>([]);
 
 
 
@@ -121,7 +120,10 @@ function TodoApp() {
     })
   )
 
-  const handleDragStart = ({active} :any ) => setActiveId(active.id);
+  const handleDragStart = ({active} :any ) => {
+    // console.log(active.id)
+    setActiveId(active.id)
+  };
 
   const handleDragCancel = () => setActiveId(null);
 
@@ -237,6 +239,16 @@ function TodoApp() {
       },
     };
   };
+
+  const getActiveColumnItem = (id: string) => {
+    const items = Object.keys(columns).map(columnId => columns[columnId]).map(column => column.items).flat()
+    const activeItem = items.filter(i => i.id === id)[0]
+    return activeItem
+  }
+
+  const getActiveColumnId = (status: string) => {
+    return status == 'In Progress' ? 'inProgress' : status.toLowerCase();
+  }
   
     
   return (
@@ -268,8 +280,6 @@ function TodoApp() {
               columnId={columnId}
               columns={columns} 
               setColumns={setColumns} 
-              todos={todos} 
-              setTodos={setTodos} 
             />
           ))
         }
@@ -277,7 +287,17 @@ function TodoApp() {
         </div>
 
         <DragOverlay>
-          {activeId ? 'overlaying': null}
+          {
+            activeId ? 
+              <TodoItem 
+                id={activeId} 
+                todo={getActiveColumnItem(activeId)} 
+                columns={columns}
+                setColumns={setColumns}
+                columnId={getActiveColumnId(getActiveColumnItem(activeId).status)}
+              />
+              : null
+          }
         </DragOverlay>
         
       </DndContext>

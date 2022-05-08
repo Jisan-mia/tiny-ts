@@ -13,11 +13,9 @@ interface IProps {
   columnId: string,
   columns: ColumnRecord,
   setColumns: React.Dispatch<React.SetStateAction<ColumnRecord>>,
-  todos: Todo[],
-  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>,
 }
 
-const Todos:React.FC<IProps> = ({activeId, column,columnId, columns, setColumns, todos, setTodos}) => {
+const Todos:React.FC<IProps> = ({activeId, column,columnId, columns, setColumns}) => {
 
   const { setNodeRef } = useDroppable({
     id: columnId
@@ -42,8 +40,6 @@ const Todos:React.FC<IProps> = ({activeId, column,columnId, columns, setColumns,
               id={todo.id}
               key={todo.id} 
               todo={todo} 
-              todos={todos} 
-              setTodos={setTodos}
               columns={columns}
               setColumns={setColumns}
               columnId={columnId}

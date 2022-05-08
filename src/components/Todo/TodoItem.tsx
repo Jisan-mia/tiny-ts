@@ -8,14 +8,13 @@ import { CSS } from "@dnd-kit/utilities";
 type IProps = {
   id: string,
   todo: Todo,
-  todos: Todo[],
-  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>,
   columns: ColumnRecord,
   setColumns: React.Dispatch<React.SetStateAction<ColumnRecord>>,
   columnId: string,
 }
 
-const TodoItem:React.FC<IProps> = ({ id, todo, todos, setTodos, columns, setColumns, columnId}) => {
+const TodoItem:React.FC<IProps> = ({ id, todo, columns, setColumns, columnId}) => {
+  console.log(columns[columnId])
   const [editModeState, setEditModeState] = useState<boolean>(false)
   const [editTodo, setEditTodo] = useState<string>(todo?.todo)
   const todoRef = useRef<HTMLTextAreaElement>(null)
@@ -43,7 +42,7 @@ const TodoItem:React.FC<IProps> = ({ id, todo, todos, setTodos, columns, setColu
   }, [editModeState])
 
   
-  const handleEditTodos = (id: string) => {
+  const handleEditTodos = (id: string, columnId: string) => {
     if(editTodo) {
       setColumns({
         ...columns,
@@ -69,11 +68,11 @@ const TodoItem:React.FC<IProps> = ({ id, todo, todos, setTodos, columns, setColu
 
     setEditModeState(false)
   }
-  const onKeyDn = (e: React.KeyboardEvent<HTMLTextAreaElement>, id: string) => {
+  const onKeyDn = (e: React.KeyboardEvent<HTMLTextAreaElement>, id: string, status: string) => {
     if (editModeState && e.keyCode === 13) { // ESC;
       setEditModeState(false)
 
-      handleEditTodos(id)
+      handleEditTodos(id, status)
     }    
   }
 
@@ -108,8 +107,8 @@ const TodoItem:React.FC<IProps> = ({ id, todo, todos, setTodos, columns, setColu
               setEditTodo(e.target.value)
               auto_height(e)
             }}
-            onBlur={() => handleEditTodos(todo.id)}
-            onKeyDown={e => onKeyDn(e, todo.id)}
+            onBlur={() => handleEditTodos(todo.id, todo.status)}
+            onKeyDown={e => onKeyDn(e, todo.id, todo.status)}
             // type="text" 
             className={styles.todo__text}
 
