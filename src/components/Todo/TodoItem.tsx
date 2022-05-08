@@ -6,6 +6,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 type IProps = {
+  handle?: boolean,
   id: string,
   todo: Todo,
   columns: ColumnRecord,
@@ -13,8 +14,8 @@ type IProps = {
   columnId: string,
 }
 
-const TodoItem:React.FC<IProps> = ({ id, todo, columns, setColumns, columnId}) => {
-  console.log(columns[columnId])
+const TodoItem:React.FC<IProps> = ({ handle, id, todo, columns, setColumns, columnId}) => {
+  // console.log(columns[columnId])
   const [editModeState, setEditModeState] = useState<boolean>(false)
   const [editTodo, setEditTodo] = useState<string>(todo?.todo)
   const todoRef = useRef<HTMLTextAreaElement>(null)
@@ -52,11 +53,7 @@ const TodoItem:React.FC<IProps> = ({ id, todo, columns, setColumns, columnId}) =
         }
       })
 
-
-      // setTodos(todos.map(todo => todo.id === id ? {...todo, todo: editTodo} : todo))
-
     } else {
-      // setTodos(todos.filter(todo => todo.id !== id))
       setColumns({
         ...columns,
         [columnId]: {
@@ -80,14 +77,16 @@ const TodoItem:React.FC<IProps> = ({ id, todo, columns, setColumns, columnId}) =
     e.target.style.height = "auto";
     e.target.style.height = (e.target.scrollHeight)+"px";
   }
+
+  const getColumnStatus = (status: string) => {
+    return status == 'In Progress' ? 'inProgress' : status.toLowerCase();
+  }
   
 
   return (
     <li 
       className={`${styles.todo__item}`} 
       ref={setNodeRef}
-      {...attributes}
-      {...listeners}
       style={style}
     > 
       {
@@ -107,8 +106,8 @@ const TodoItem:React.FC<IProps> = ({ id, todo, columns, setColumns, columnId}) =
               setEditTodo(e.target.value)
               auto_height(e)
             }}
-            onBlur={() => handleEditTodos(todo.id, todo.status)}
-            onKeyDown={e => onKeyDn(e, todo.id, todo.status)}
+            onBlur={() => handleEditTodos(todo.id, getColumnStatus(todo.status))}
+            onKeyDown={e => onKeyDn(e, todo.id, getColumnStatus(todo.status))}
             // type="text" 
             className={styles.todo__text}
 
@@ -118,7 +117,7 @@ const TodoItem:React.FC<IProps> = ({ id, todo, columns, setColumns, columnId}) =
       
       
 
-      <div className={styles.actions}>
+      <div className={styles.actions} {...attributes} {...listeners}>
         {/* <input type="checkbox" checked={todo.isDone} name="" id="" /> */}
       </div>
     

@@ -37,6 +37,7 @@ const Todos:React.FC<IProps> = ({activeId, column,columnId, columns, setColumns}
         {
           column.items.map((todo, idx) => (
             <TodoItem 
+              handle={true}
               id={todo.id}
               key={todo.id} 
               todo={todo} 
