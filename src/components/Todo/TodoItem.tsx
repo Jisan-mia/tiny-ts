@@ -2,7 +2,11 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Column, ColumnRecord, Todo } from '../types'
 import styles from './TodoItem.module.scss'
 
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
 type IProps = {
+  id: string,
   todo: Todo,
   todos: Todo[],
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>,
@@ -11,11 +15,25 @@ type IProps = {
   columnId: string,
 }
 
-const TodoItem:React.FC<IProps> = ({ todo, todos, setTodos, columns, setColumns, columnId}) => {
+const TodoItem:React.FC<IProps> = ({ id, todo, todos, setTodos, columns, setColumns, columnId}) => {
   const [editModeState, setEditModeState] = useState<boolean>(false)
   const [editTodo, setEditTodo] = useState<string>(todo?.todo)
   const todoRef = useRef<HTMLTextAreaElement>(null)
 
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
 
 
   // console.log(todo, index)
@@ -25,7 +43,7 @@ const TodoItem:React.FC<IProps> = ({ todo, todos, setTodos, columns, setColumns,
   }, [editModeState])
 
   
-  const handleEditTodos = (id: number) => {
+  const handleEditTodos = (id: string) => {
     if(editTodo) {
       setColumns({
         ...columns,
@@ -51,7 +69,7 @@ const TodoItem:React.FC<IProps> = ({ todo, todos, setTodos, columns, setColumns,
 
     setEditModeState(false)
   }
-  const onKeyDn = (e: React.KeyboardEvent<HTMLTextAreaElement>, id: number) => {
+  const onKeyDn = (e: React.KeyboardEvent<HTMLTextAreaElement>, id: string) => {
     if (editModeState && e.keyCode === 13) { // ESC;
       setEditModeState(false)
 
@@ -68,6 +86,10 @@ const TodoItem:React.FC<IProps> = ({ todo, todos, setTodos, columns, setColumns,
   return (
     <li 
       className={`${styles.todo__item}`} 
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      style={style}
     > 
       {
         !editModeState ? (

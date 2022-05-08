@@ -6,6 +6,7 @@ import styles from './Column.module.scss'
 
 import {
   DndContext,
+  DragOverEvent,
   DragOverlay,
   KeyboardSensor,
   MouseSensor,
@@ -14,6 +15,9 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { arrayMove, insertAtIndex, removeAtIndex } from "../utils/array";
+import createUUID from "../utils/helpers";
+import TodoItem from "./TodoItem";
 
 
 
@@ -24,8 +28,13 @@ function TodoApp() {
       name: 'Backlog',
       items: [
         {
-          id: 54545484,
+          id: createUUID(),
           todo: 'backlog demo',
+          status: 'Backlog'
+        },
+        {
+          id: createUUID(),
+          todo: 'backlog demo 2',
           status: 'Backlog'
         }
       ]
@@ -34,9 +43,15 @@ function TodoApp() {
       name: 'Todo',
       items: [
         {
-          id: 3898748,
+          id: createUUID(),
           todo: 'todo demo',
-          status: 'Todo'
+          status: 'Todo',
+          
+        },
+        {
+          id: createUUID(),
+          todo: 'todo demo 2',
+          status: 'todo'
         }
       ]
     },
@@ -44,7 +59,7 @@ function TodoApp() {
       name: "In Progress",
       items: [
         {
-          id: 215754,
+          id: createUUID(),
           todo: 'in progress demo',
           status: 'In Progress'
         }
@@ -54,7 +69,7 @@ function TodoApp() {
       name: "Done",
       items: [
         {
-          id: 98359234,
+          id: createUUID(),
           todo: 'done demo',
           status: 'Done'
         }
@@ -81,7 +96,7 @@ function TodoApp() {
           items: [
             ...columns[columnId].items,
             {
-              id: Date.now(),
+              id: createUUID(),
               todo: todo,
               status: todoStatus
             }
@@ -94,6 +109,134 @@ function TodoApp() {
     }
   }
 
+
+
+  // dnd-kit
+  const [activeId, setActiveId] = useState(null)
+  const sensors = useSensors(
+    useSensor(MouseSensor),
+    useSensor(TouchSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
+
+  const handleDragStart = ({active} :any ) => setActiveId(active.id);
+
+  const handleDragCancel = () => setActiveId(null);
+
+
+  
+  const handleDragOver = ({active, over}: DragOverEvent) => {
+    const overId = over?.id;
+    console.log({active, over})
+
+
+    if(!overId) return;
+
+
+    const activeContainer = active.data.current?.sortable.containerId;
+    const overContainer = over.data.current?.sortable.containerId || over.id;
+
+
+    if(activeContainer !== overContainer) {
+      setColumns((columns) => {
+        const activeIndex = active.data.current?.sortable.index;
+        const overIndex =
+          over.id in columns
+            ? columns[overContainer].items.length + 1
+            : over.data.current?.sortable.index;
+
+        return moveBetweenContainers(
+          columns,
+          activeContainer,
+          activeIndex,
+          overContainer,
+          overIndex,
+          active.id
+        );
+      });
+    }
+  }
+  
+  const handleDragEnd = ({ active, over }: DragOverEvent) => {
+    if (!over) {
+      setActiveId(null);
+      return;
+    }
+    console.log({active, over})
+
+
+    if (active.id !== over.id) {
+      const activeContainer = active.data.current?.sortable.containerId;
+      const overContainer = over.data.current?.sortable.containerId || over.id;
+      const activeIndex = active.data.current?.sortable.index;
+      const overIndex =
+        over.id in columns
+          ? columns[overContainer].items.length + 1
+          : over.data.current?.sortable.index;
+
+      setColumns((columns) => {
+        let newItems;
+        if (activeContainer === overContainer) {
+          newItems = {
+            ...columns,
+            [overContainer]: {
+              ...columns[overContainer],
+              items: [
+                ...arrayMove(
+                  columns[overContainer].items,
+                  activeIndex,
+                  overIndex
+                )
+              ]
+            },
+          };
+        } else {
+          newItems = moveBetweenContainers(
+            columns,
+            activeContainer,
+            activeIndex,
+            overContainer,
+            overIndex,
+            active.id
+          );
+        }
+
+        return newItems;
+      });
+    }
+
+    setActiveId(null);
+  };
+
+
+  const moveBetweenContainers = (
+    columns: ColumnRecord,
+    activeContainer: any,
+    activeIndex: any,
+    overContainer: any,
+    overIndex: any,
+    item: any
+  ) => {
+    return {
+      ...columns,
+      [activeContainer]: {
+        ...columns[activeContainer],
+        items: [
+          // ...columns[activeContainer].items,
+          ...removeAtIndex(columns[activeContainer].items, activeIndex)
+        ]
+      },
+      [overContainer]: {
+        ...columns[overContainer],
+        items: [
+          // ...columns[overContainer].items,
+          ...insertAtIndex(columns[overContainer].items, overIndex, item)
+        ]
+      },
+    };
+  };
   
     
   return (
@@ -106,12 +249,21 @@ function TodoApp() {
         handleSubmitTodo={handleSubmitTodo}
       />
 
-      <div className={styles.todo__container}>
 
+      <DndContext
+        sensors={sensors}
+        onDragStart={handleDragStart}
+        onDragCancel={handleDragCancel}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+      >
+          
+        <div className={styles.todo__container}>
         {
-          Object.entries(columns).map(([columnId, column], idx) => (
+          Object.entries(columns).map(([columnId, column]) => (
             <TodoColumn 
-              key={idx}
+              key={columnId}
+              activeId={activeId}
               column={column}
               columnId={columnId}
               columns={columns} 
@@ -122,7 +274,15 @@ function TodoApp() {
           ))
         }
 
-      </div>
+        </div>
+
+        <DragOverlay>
+          {activeId ? 'overlaying': null}
+        </DragOverlay>
+        
+      </DndContext>
+
+
     </>
 
   );
