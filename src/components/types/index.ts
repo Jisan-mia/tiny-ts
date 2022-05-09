@@ -1,5 +1,5 @@
 export interface Todo {
-  id: number,
+  id: string,
   todo: string,
   status: string
   dateCreaeted?: Date,
