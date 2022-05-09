@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Column, ColumnRecord, Status, Todo } from "../types";
 import TodoInput from "./TodoInput";
 import TodoColumn from "./TodoColumn";
 import styles from './Column.module.scss'
 
 import {
+  closestCorners,
+  defaultDropAnimation,
   DndContext,
   DragOverEvent,
   DragOverlay,
@@ -14,11 +16,19 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import { arrayMove, insertAtIndex, removeAtIndex } from "../utils/array";
+import { insertAtIndex, removeAtIndex } from "../utils/array";
 import createUUID from "../utils/helpers";
 import TodoItem from "./TodoItem";
 
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  SortingStrategy
+} from "@dnd-kit/sortable";
+
+export const VOID_ID = "void";
 
 
 function TodoApp() {
@@ -80,6 +90,10 @@ function TodoApp() {
   const [todo, setTodo] = useState<string>("");
   const [todoStatus, setTodoStatus] = useState<Status>("Backlog")
 
+  useEffect(() => {
+    console.log(columns)
+  }, [columns])
+
 
 
   const handleSubmitTodo = (e: React.FormEvent<HTMLFormElement>) => {
@@ -127,113 +141,142 @@ function TodoApp() {
 
   const handleDragCancel = () => setActiveId(null);
 
-
   
-  const handleDragOver = ({active, over}: DragOverEvent) => {
+  const findContainer = (id: string) => {
+    if (id in columns) {
+      return id;
+    }
+    
+
+    return Object.keys(columns).find((key) => columns[key].items.map(i => i.id).includes(id));
+  };
+
+  const handleDragOver = ({ active, over }: DragOverEvent) => {
     const overId = over?.id;
-    console.log({active, over})
 
+    if (!overId) {
+      return;
+    }
 
-    if(!overId) return;
+    const overContainer = findContainer(overId);
+    const activeContainer = findContainer(active.id);
 
+    if (!overContainer || !activeContainer) {
+      return;
+    }
 
-    const activeContainer = active.data.current?.sortable.containerId;
-    const overContainer = over.data.current?.sortable.containerId || over.id;
-
-
-    if(activeContainer !== overContainer) {
+    if (activeContainer !== overContainer) {
       setColumns((columns) => {
-        const activeIndex = active.data.current?.sortable.index;
-        const overIndex =
-          over.id in columns
-            ? columns[overContainer].items.length + 1
-            : over.data.current?.sortable.index;
+        const activeItems = columns[activeContainer].items;
+        const overItems = columns[overContainer].items;
+        const overIndex = overItems.map(i => i.id).indexOf(overId);
+        const activeIndex = activeItems.map(i => i.id).indexOf(active.id);
 
-        return moveBetweenContainers(
-          columns,
-          activeContainer,
-          activeIndex,
-          overContainer,
-          overIndex,
-          active.id
-        );
+        let newIndex: number;
+
+        if (overId in columns) {
+          newIndex = overItems.length + 1;
+        } else {
+          const isBelowLastItem =
+            over &&
+            overIndex === overItems.length - 1 &&
+            active.rect.current.translated &&
+            active.rect.current.translated.offsetTop >
+              over.rect.offsetTop + over.rect.height;
+
+          const modifier = isBelowLastItem ? 1 : 0;
+
+          newIndex =
+            overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
+        }
+
+        return {
+          ...columns,
+          [activeContainer]: {
+            ...columns[activeContainer],
+            items: [
+              ...columns[activeContainer].items.filter((item) => item.id !== active.id)
+            ]
+          },
+          [overContainer]: {
+            ...columns[overContainer],
+            items: insert(
+              columns[overContainer].items,
+              newIndex,
+              columns[activeContainer].items[activeIndex]
+            )
+          }
+          // [overContainer]: [
+          //   ...columns[overContainer].slice(0, newIndex),
+          //   columns[activeContainer][activeIndex],
+          //   ...columns[overContainer].slice(
+          //     newIndex,
+          //     columns[overContainer].length
+          //   )
+          // ]
+        };
       });
     }
   }
-  
+
+
+
   const handleDragEnd = ({ active, over }: DragOverEvent) => {
-    if (!over) {
+    const activeContainer = findContainer(active.id);
+
+    if (!activeContainer) {
       setActiveId(null);
       return;
     }
-    console.log({active, over})
 
+    const overId = over?.id || VOID_ID;
 
-    if (active.id !== over.id) {
-      const activeContainer = active.data.current?.sortable.containerId;
-      const overContainer = over.data.current?.sortable.containerId || over.id;
-      const activeIndex = active.data.current?.sortable.index;
-      const overIndex =
-        over.id in columns
-          ? columns[overContainer].items.length + 1
-          : over.data.current?.sortable.index;
+    
 
-      setColumns((columns) => {
-        let newItems;
-        if (activeContainer === overContainer) {
-          newItems = {
-            ...columns,
-            [overContainer]: {
-              ...columns[overContainer],
-              items: [
-                ...arrayMove(
-                  columns[overContainer].items,
-                  activeIndex,
-                  overIndex
-                )
-              ]
-            },
-          };
-        } else {
-          newItems = moveBetweenContainers(
-            columns,
-            activeContainer,
-            activeIndex,
-            overContainer,
-            overIndex,
-            active.id
-          );
-        }
+    const overContainer = findContainer(overId);
 
-        return newItems;
-      });
+    if (activeContainer && overContainer) {
+      const activeIndex = columns[activeContainer].items.map(i => i.id).indexOf(active.id);
+      const overIndex = columns[overContainer].items.map(i => i.id).indexOf(overId);
+
+      if (activeIndex !== overIndex) {
+        setColumns((columns) => ({
+          ...columns,
+          [overContainer]: {
+            ...columns[overContainer],
+            items: arrayMove(
+              columns[overContainer].items,
+              activeIndex,
+              overIndex
+            )
+          }
+        }));
+      }
     }
 
     setActiveId(null);
-  };
+  }
 
 
   const moveBetweenContainers = (
     columns: ColumnRecord,
-    activeContainer: any,
-    activeIndex: any,
-    overContainer: any,
-    overIndex: any,
-    item: any
+    activeContainer: string,
+    activeIndex: number,
+    overContainer: string,
+    overIndex: number,
+    item: string
   ) => {
     return {
       ...columns,
       [activeContainer]: {
         ...columns[activeContainer],
         items: [
-          // ...columns[activeContainer].items,
           ...removeAtIndex(columns[activeContainer].items, activeIndex)
         ]
       },
       [overContainer]: {
         ...columns[overContainer],
         items: [
-          // ...columns[overContainer].items,
           ...insertAtIndex(columns[overContainer].items, overIndex, item)
         ]
       },
@@ -264,10 +307,11 @@ function TodoApp() {
 
       <DndContext
         sensors={sensors}
+        collisionDetection={closestCorners}
         onDragStart={handleDragStart}
-        onDragCancel={handleDragCancel}
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
+        onDragCancel={handleDragCancel}
       >
           
         <div className={styles.todo__container}>
@@ -288,9 +332,12 @@ function TodoApp() {
 
         <DragOverlay 
           dropAnimation={{
-            duration: 500,
-            easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+            ...defaultDropAnimation,
+            dragSourceOpacity: 0.5,
+            // duration: 500,
+            // easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
           }}
+          adjustScale={true}
         >
           {
             activeId ? 
@@ -299,7 +346,7 @@ function TodoApp() {
                 todo={getActiveColumnItem(activeId)} 
                 columns={columns}
                 setColumns={setColumns}
-                columnId={getActiveColumnId(getActiveColumnItem(activeId).status)}
+                // columnId={getActiveColumnId(getActiveColumnItem(activeId).status)}
               />
               : null
           }
@@ -312,5 +359,12 @@ function TodoApp() {
 
   );
 }
+
+function insert<T>(arr: T[], index: number, elem: T) {
+  const copy = arr.slice();
+  copy.splice(index, 0, elem);
+  return copy;
+}
+
 
 export default TodoApp;

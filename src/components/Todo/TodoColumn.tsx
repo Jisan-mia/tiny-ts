@@ -34,7 +34,7 @@ const Todos:React.FC<IProps> = ({activeId, column,columnId, columns, setColumns}
         strategy={rectSortingStrategy}
       >
       <ul className={styles.todos} ref={setNodeRef}>
-        {
+        { column.items.length ? 
           column.items.map((todo, idx) => (
             <TodoItem 
               handle={true}
@@ -45,7 +45,7 @@ const Todos:React.FC<IProps> = ({activeId, column,columnId, columns, setColumns}
               setColumns={setColumns}
               columnId={columnId}
             />
-          ))
+          )) : ''
         }
       </ul>
 

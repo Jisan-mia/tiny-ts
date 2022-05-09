@@ -11,11 +11,11 @@ type IProps = {
   todo: Todo,
   columns: ColumnRecord,
   setColumns: React.Dispatch<React.SetStateAction<ColumnRecord>>,
-  columnId: string,
+  columnId?: string,
 }
 
 const TodoItem:React.FC<IProps> = ({ handle, id, todo, columns, setColumns, columnId}) => {
-  // console.log(columns[columnId])
+  // console.log(todo)
   const [editModeState, setEditModeState] = useState<boolean>(false)
   const [editTodo, setEditTodo] = useState<string>(todo?.todo)
   const todoRef = useRef<HTMLTextAreaElement>(null)
