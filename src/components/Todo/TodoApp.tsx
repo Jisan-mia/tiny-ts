@@ -154,6 +154,8 @@ function TodoApp() {
   const handleDragOver = ({ active, over }: DragOverEvent) => {
     const overId = over?.id;
 
+    
+
     if (!overId) {
       return;
     }
@@ -183,6 +185,7 @@ function TodoApp() {
             active.rect.current.translated &&
             active.rect.current.translated.offsetTop >
               over.rect.offsetTop + over.rect.height;
+          
 
           const modifier = isBelowLastItem ? 1 : 0;
 
