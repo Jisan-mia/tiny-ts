@@ -182,9 +182,9 @@ function TodoApp() {
           const isBelowLastItem =
             over &&
             overIndex === overItems.length - 1 &&
-            active.rect.current.translated &&
-            active.rect.current.translated.offsetTop >
-              over.rect.offsetTop + over.rect.height;
+            active.rect.current.translated 
+            // active.rect.current.translated.offsetTop >
+            //   over.rect.offsetTop + over.rect.height;
           
 
           const modifier = isBelowLastItem ? 1 : 0;
